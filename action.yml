@@ -1,0 +1,15 @@
+name: 'minecraft-whitelist-validator'
+description: 'validate Minecraft whitelist.json'
+author: 'sksat <sksat@sksat.net>'
+
+inputs:
+  json:
+    description: whitelist.json
+    required: true
+    default: 'whitelist.json'
+
+runs:
+  using: 'docker'
+  image: 'ghcr.io/sksat/minecraft-whitelist-validator:develop'
+  args:
+    - ${{ inputs.json }}
