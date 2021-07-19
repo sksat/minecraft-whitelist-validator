@@ -3,6 +3,7 @@ use std::io::{BufRead, BufReader};
 
 use serde::{Deserialize, Serialize};
 
+#[cfg(test)]
 pub mod test;
 
 type UserList = Vec<User>;
