@@ -88,12 +88,12 @@ mod tests {
     use crate::*;
     use uuid::Uuid;
 
-    #[tokio::test]
-    async fn status() {
-        let st = mojang::api_status().await.unwrap();
+    //#[tokio::test]
+    //async fn status() {
+    //    let st = mojang::api_status().await.unwrap();
 
-        println!("{:?}", st);
-    }
+    //    println!("{:?}", st);
+    //}
 
     #[tokio::test]
     async fn name2uuid() {
