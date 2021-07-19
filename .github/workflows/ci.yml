@@ -10,7 +10,7 @@ on:
       - '.github/workflows/ci.yml'
 
 jobs:
-  build:
+  check:
     runs-on: ubuntu-latest
 
     steps:
