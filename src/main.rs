@@ -33,18 +33,18 @@ async fn main() {
     let stdin = std::io::stdin();
     let mut stdin_lock = stdin.lock();
 
-    let mut buf: Box<dyn BufRead> = if let Some(file) = matches.value_of("JSON_FILE") {
+    let mut buf: Box<dyn BufRead> = if matches.is_present("stdin") {
+        Box::new(&mut stdin_lock)
+    } else {
+        let file = if let Some(file) = matches.value_of("JSON_FILE") {
+            file
+        } else {
+            "whitelist.json"
+        };
         println!("file: {}", file);
         let file = File::open(file).unwrap();
         let buf = BufReader::new(file);
         Box::new(buf)
-    } else {
-        // stdin?
-        if !matches.is_present("stdin") {
-            panic!("")
-        }
-
-        Box::new(&mut stdin_lock)
     };
 
     let json = buf2str(&mut buf).unwrap();
