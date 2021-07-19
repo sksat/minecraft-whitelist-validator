@@ -10,3 +10,5 @@ jobs:
       - uses: actions/checkout@v2
 
       - uses: sksat/minecraft-whitelist-validator@develop
+        with:
+          json: test/yohanesu_whitelist.json
