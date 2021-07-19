@@ -1,4 +1,4 @@
-name: Build with musl-libc
+name: Build single-binary
 
 on:
   push:
