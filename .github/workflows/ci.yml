@@ -6,6 +6,7 @@ on:
       - 'src/**'
       - 'Cargo.toml'
       - 'Cargo.lock'
+      - 'test/**'
       - '.github/workflows/ci.yml'
 
 jobs:
@@ -25,3 +26,8 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           args: --all-features
+
+      - name: execute unit test
+        uses: actions-rs/cargo@v1
+        with:
+          command: test
