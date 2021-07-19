@@ -6,6 +6,8 @@ use serde::{Deserialize, Serialize};
 #[cfg(test)]
 pub mod test;
 
+pub mod mojang;
+
 type UserList = Vec<User>;
 
 #[derive(Serialize, Deserialize, Debug)]
