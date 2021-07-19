@@ -6,4 +6,5 @@ RUN cargo build --release
 FROM gcr.io/distroless/cc
 WORKDIR app
 COPY --from=builder /build/target/release/minecraft-whitelist-validator /app
-CMD ["/app/minecraft-whitelist-validator"]
+COPY entrypoint.sh /entrypoint.sh
+ENTRYPOINT ["/entrypoint.sh"]
