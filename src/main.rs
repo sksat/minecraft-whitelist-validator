@@ -1,20 +1,11 @@
 use std::fs::File;
 use std::io::{BufRead, BufReader};
 
-use serde::{Deserialize, Serialize};
-
 #[cfg(test)]
 pub mod test;
 
+pub mod minecraft;
 pub mod mojang;
-
-type UserList = Vec<User>;
-
-#[derive(Serialize, Deserialize, Debug)]
-struct User {
-    name: String,
-    uuid: String,
-}
 
 fn main() {
     use clap::Arg;
@@ -58,7 +49,7 @@ fn main() {
     let json = buf2str(&mut buf).unwrap();
     println!("{}", json);
 
-    let _whitelist: UserList = serde_json::from_str(&json).unwrap();
+    let _whitelist: minecraft::UserList = serde_json::from_str(&json).unwrap();
 }
 
 fn buf2str(stream: &mut impl BufRead) -> Result<String, ()> {

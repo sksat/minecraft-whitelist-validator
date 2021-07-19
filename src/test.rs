@@ -9,12 +9,12 @@ fn it_works() {
           }
         ]"#;
 
-    let _whitelist: UserList = serde_json::from_str(json).unwrap();
+    let _whitelist: minecraft::UserList = serde_json::from_str(json).unwrap();
 }
 
 #[test]
 fn mc_yohane_su() {
     let json = include_str!("../test/yohanesu_whitelist.json");
 
-    let _whitelist: UserList = serde_json::from_str(json).unwrap();
+    let _whitelist: minecraft::UserList = serde_json::from_str(json).unwrap();
 }
