@@ -59,7 +59,7 @@ pub async fn name2user(uname: &str) -> Result<Option<User>, Error> {
     ))
     .await?;
 
-    println!("res: {:?}", res);
+    //println!("res: {:?}", res);
 
     match res.status() {
         StatusCode::OK => {}

@@ -7,7 +7,8 @@ pub mod test;
 pub mod minecraft;
 pub mod mojang;
 
-fn main() {
+#[tokio::main]
+async fn main() {
     use clap::Arg;
 
     let matches = clap::App::new(env!("CARGO_PKG_NAME"))
@@ -47,9 +48,20 @@ fn main() {
     };
 
     let json = buf2str(&mut buf).unwrap();
-    println!("{}", json);
 
-    let _whitelist: minecraft::UserList = serde_json::from_str(&json).unwrap();
+    let whitelist: minecraft::UserList = serde_json::from_str(&json).unwrap();
+
+    println!("start user check...");
+    for user in whitelist {
+        print!("{}: ", user.name);
+        if user.exist().await.unwrap() {
+            println!("[ok]");
+            continue;
+        }
+
+        println!("does not exist!");
+        std::process::exit(1);
+    }
 }
 
 fn buf2str(stream: &mut impl BufRead) -> Result<String, ()> {
