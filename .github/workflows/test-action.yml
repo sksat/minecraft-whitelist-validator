@@ -1,6 +1,11 @@
 name: test Action
 
-on: push
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'action.yml'
+      - '.github/workflows/test-action.yml'
 
 jobs:
   test:
