@@ -1,0 +1,19 @@
+name: test Action
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'action.yml'
+      - '.github/workflows/test-action.yml'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: sksat/minecraft-whitelist-validator@main
+        with:
+          json: test/yohanesu_whitelist.json

@@ -49,7 +49,7 @@ pub async fn api_status() -> Result<Vec<ApiStatus>, Error> {
 }
 
 pub async fn name2user(uname: &str) -> Result<Option<User>, Error> {
-    if uname.len() == 0 {
+    if uname.is_empty() {
         return Ok(None);
     }
 
