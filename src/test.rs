@@ -13,10 +13,13 @@ fn it_works() {
 }
 
 #[tokio::test]
-async fn mc_yohane_su() {
-    let json = include_str!("../test/yohanesu_whitelist.json");
+async fn mc_yohane_su() -> Result<(), reqwest::Error> {
+    let url = "https://raw.githubusercontent.com/sksat/mc.yohane.su/main/data/whitelist.json";
 
-    let whitelist: minecraft::UserList = serde_json::from_str(json).unwrap();
+    let json = reqwest::get(url).await?.text().await?;
+    println!("whitelist.json: {}", json);
+
+    let whitelist: minecraft::UserList = serde_json::from_str(&json).unwrap();
 
     for user in whitelist {
         if user.exist().await.unwrap() {
@@ -25,4 +28,6 @@ async fn mc_yohane_su() {
 
         panic!("\"{}\" does not exist!", user.name);
     }
+
+    Ok(())
 }
