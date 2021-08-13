@@ -14,6 +14,13 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
+      - name: checkout mc.yohane.su
+        uses: actions/checkout@v2
+        with:
+          repository: sksat/mc.yohane.su
+          ref: main
+          path: mc.yohane.su
+
       - uses: sksat/minecraft-whitelist-validator@main
         with:
-          json: test/yohanesu_whitelist.json
+          json: mc.yohane.su/data/whitelist.json
