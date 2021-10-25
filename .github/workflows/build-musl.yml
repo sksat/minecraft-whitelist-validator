@@ -1,4 +1,4 @@
-name: Build single-binary
+name: build / single-binary by musl libc
 
 on:
   push:
