@@ -1,7 +1,7 @@
 name: validate renovate
 
 on:
-  push:
+  pull_request:
     paths:
       - 'renovate.json'
       - '.github/workflows/renovate-validate.yml'
