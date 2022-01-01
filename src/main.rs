@@ -33,22 +33,38 @@ async fn main() {
     let stdin = std::io::stdin();
     let mut stdin_lock = stdin.lock();
 
-    let mut buf: Box<dyn BufRead> = if matches.is_present("stdin") {
-        Box::new(&mut stdin_lock)
+    let buf: (&str, Box<dyn BufRead>) = if matches.is_present("stdin") {
+        ("stdin", Box::new(&mut stdin_lock))
     } else {
-        let file = if let Some(file) = matches.value_of("JSON_FILE") {
-            file
+        let fname = if let Some(fname) = matches.value_of("JSON_FILE") {
+            fname
         } else {
             "whitelist.json"
         };
-        println!("file: {}", file);
-        let file = File::open(file).unwrap();
+        println!("file: {}", fname);
+        let file = File::open(fname).unwrap();
         let buf = BufReader::new(file);
-        Box::new(buf)
+        (fname, Box::new(buf))
     };
+    let (fname, mut buf) = buf;
 
     let json = buf2str(&mut buf).unwrap();
 
+    let result: Result<minecraft::UserList, _> = serde_json::from_str(&json);
+    if let Err(err) = result {
+        use rdfmt::*;
+        let ejson =
+            RdJson::error().diagnost(Diagnostic::error().message(err.to_string()).location(
+                Location {
+                    path: Some(fname.to_string()),
+                    range: Some(Range {
+                        start: Some(Position::new(err.line(), err.column())),
+                        end: None,
+                    }),
+                },
+            ));
+        println!("{}", serde_json::to_string(&ejson).unwrap());
+    }
     let whitelist: minecraft::UserList = serde_json::from_str(&json).unwrap();
 
     println!("start user check...");
