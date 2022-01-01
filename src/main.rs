@@ -16,14 +16,14 @@ async fn main() {
         .author(env!("CARGO_PKG_AUTHORS"))
         .about(env!("CARGO_PKG_DESCRIPTION"))
         .arg(
-            Arg::with_name("stdin")
-                .short("s")
+            Arg::new("stdin")
+                .short('s')
                 .long("stdin")
                 .help("read from stdin")
                 .takes_value(false),
         )
         .arg(
-            Arg::with_name("JSON_FILE")
+            Arg::new("JSON_FILE")
                 .help("path to whitelist.json")
                 //.required(true)
                 .index(1),
