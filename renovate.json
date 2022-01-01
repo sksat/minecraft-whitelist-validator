@@ -4,6 +4,11 @@
     {
       "matchUpdateTypes": ["minor", "patch"],
       "automerge": true
+    },
+    {
+      "groupName": "serde",
+      "groupSlug": "serde",
+      "packageNames": ["serde", "serde_derive"]
     }
   ],
   "regexManagers": [
