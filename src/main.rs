@@ -23,10 +23,12 @@ async fn main() {
                 .takes_value(false),
         )
         .arg(
-            Arg::new("JSON_FILE")
-                .help("path to whitelist.json")
-                //.required(true)
-                .index(1),
+            Arg::new("whitelist")
+                .long("whitelist")
+                .env("JSON_FILE")
+                .takes_value(true)
+                .default_value("whitelist.json")
+                .help("path to whitelist.json"),
         )
         .get_matches();
 
@@ -36,11 +38,7 @@ async fn main() {
     let buf: (&str, Box<dyn BufRead>) = if matches.is_present("stdin") {
         ("stdin", Box::new(&mut stdin_lock))
     } else {
-        let fname = if let Some(fname) = matches.value_of("JSON_FILE") {
-            fname
-        } else {
-            "whitelist.json"
-        };
+        let fname = matches.value_of("whitelist").unwrap();
         println!("file: {}", fname);
         let file = File::open(fname).unwrap();
         let buf = BufReader::new(file);
