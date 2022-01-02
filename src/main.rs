@@ -1,6 +1,8 @@
 use std::fs::File;
 use std::io::{BufRead, BufReader};
 
+use json_spanned_value as jsv;
+
 #[cfg(test)]
 pub mod test;
 
@@ -47,7 +49,10 @@ async fn main() {
     let (fname, mut buf) = buf;
 
     let json = buf2str(&mut buf).unwrap();
+    let mut files = codespan_reporting::files::SimpleFiles::new();
+    let file = files.add(fname, &json);
 
+    // check json file is valid user list
     let result: Result<minecraft::UserList, _> = serde_json::from_str(&json);
     if let Err(err) = result {
         use rdfmt::*;
@@ -62,18 +67,39 @@ async fn main() {
                 },
             ));
         println!("{}", serde_json::to_string(&ejson).unwrap());
+        panic!();
     }
-    let whitelist: minecraft::UserList = serde_json::from_str(&json).unwrap();
+    let user_list = result.unwrap();
+    let spanned_list: jsv::spanned::Array = jsv::from_str(&json).unwrap();
+    let spanned_list: Vec<jsv::Spanned<_>> = spanned_list.into_inner();
+
+    let it = user_list.iter().zip(spanned_list.iter());
 
     println!("start user check...");
-    for user in whitelist {
+    for (user, spanned) in it {
         print!("{}: ", user.name);
         if user.exist().await.unwrap() {
             println!("[ok]");
             continue;
         }
 
-        println!("does not exist!");
+        let obj = spanned.as_span_object().unwrap();
+        println!("{}", obj.range().start);
+
+        use codespan_reporting::term;
+        term::emit(
+            &mut term::termcolor::StandardStream::stdout(term::termcolor::ColorChoice::Auto),
+            &term::Config::default(),
+            &files,
+            &codespan_reporting::diagnostic::Diagnostic::error()
+                .with_message("this user does not exist!")
+                .with_labels(vec![codespan_reporting::diagnostic::Label::primary(
+                    file,
+                    obj.range(),
+                )]),
+        )
+        .unwrap();
+
         std::process::exit(1);
     }
 }
