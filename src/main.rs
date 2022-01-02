@@ -76,6 +76,7 @@ async fn main() {
     let it = user_list.iter().zip(spanned_list.iter());
 
     println!("start user check...");
+    let mut has_error = false;
     for (user, spanned) in it {
         print!("{}: ", user.name);
         if user.exist().await.unwrap() {
@@ -84,7 +85,6 @@ async fn main() {
         }
 
         let obj = spanned.as_span_object().unwrap();
-        println!("{}", obj.range().start);
 
         use codespan_reporting::term;
         term::emit(
@@ -100,6 +100,10 @@ async fn main() {
         )
         .unwrap();
 
+        has_error = true;
+    }
+
+    if has_error {
         std::process::exit(1);
     }
 }
