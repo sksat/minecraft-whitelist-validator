@@ -8,6 +8,11 @@ on:
     paths:
       - 'action.yml'
       - '.github/workflows/test-action.yml'
+  pull_request:
+    paths-ignore:
+      - 'README.md'
+      - 'LICENSE'
+      - 'renovate.json'
 
 jobs:
   test:
@@ -23,8 +28,14 @@ jobs:
           ref: main
           path: mc.yohane.su
 
-      - uses: sksat/minecraft-whitelist-validator@main
+      - name: generate image tag
+        id: tag
+        run: |
+          echo "::set-output name=img_tag::sha-$(git rev-parse --short HEAD)"
+
+      - uses: sksat/minecraft-whitelist-validator@HEAD
         with:
+          img_tag: ${{ steps.tag.outputs.img_tag }}
           json: mc.yohane.su/data/whitelist.json
           rdjson: errors.json
 
