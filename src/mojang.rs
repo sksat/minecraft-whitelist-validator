@@ -43,7 +43,8 @@ pub async fn api_status() -> Result<Vec<ApiStatus>, Error> {
         .text()
         .await?;
 
-    let st = serde_json::from_str(&res).unwrap();
+    let st = serde_json::from_str(&res)
+        .unwrap_or_else(|_| panic!("mojang status returns broken JSON!: {}", &res));
 
     Ok(st)
 }
@@ -69,7 +70,8 @@ pub async fn name2user(uname: &str) -> Result<Option<User>, Error> {
 
     let res = res.text().await?;
 
-    let user: User = serde_json::from_str(&res).unwrap();
+    let user: User = serde_json::from_str(&res)
+        .unwrap_or_else(|_| panic!("mojang API returns broken JSON!: {}", &res));
     Ok(Some(user))
 }
 

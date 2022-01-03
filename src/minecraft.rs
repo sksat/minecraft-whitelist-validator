@@ -14,10 +14,10 @@ pub struct User {
 
 impl From<mojang::User> for User {
     fn from(u: mojang::User) -> User {
-        User {
-            name: u.name,
-            uuid: Uuid::parse_str(&u.id).unwrap(),
-        }
+        let name = u.name;
+        let uuid = &u.id;
+        let uuid = Uuid::parse_str(uuid).unwrap_or_else(|_| panic!("parse UUID failed!: {}", uuid));
+        User { name, uuid }
     }
 }
 
