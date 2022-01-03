@@ -131,9 +131,13 @@ async fn main() {
     let rdjson = serde_json::to_string(&rdjson).expect("rdjson serialize failed!");
     println!("{}", rdjson);
     if let Some(fname) = matches.value_of("rdjson") {
-        let mut file = File::create(fname)
-            .unwrap_or_else(|_| panic!("could not create rdjson file: {}", fname));
-        file.write_all(rdjson.as_bytes()).unwrap();
+        if fname.is_empty() {
+            println!("warning: rdjson file name is empty. skip output.");
+        } else {
+            let mut file = File::create(fname)
+                .unwrap_or_else(|_| panic!("could not create rdjson file: {}", fname));
+            file.write_all(rdjson.as_bytes()).unwrap();
+        }
     }
 
     if has_error {
