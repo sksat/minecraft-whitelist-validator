@@ -3,6 +3,8 @@ name: test Action
 on:
   workflow_dispatch:
   push:
+    branches:
+      - main
     paths:
       - 'action.yml'
       - '.github/workflows/test-action.yml'
