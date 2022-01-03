@@ -24,9 +24,16 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
+
+      - name: Get Rust toolchain
+        id: toolchain
+        run: |
+          echo -n "::set-output name=toolchain::"
+          awk -F'[ ="]+' '$1 == "channel" { print $2 }' rust-toolchain
+
       - uses: actions-rs/toolchain@v1
         with:
-          toolchain: stable
+          toolchain: ${{ steps.toolchain.outputs.toolchain }}
           components: clippy
           override: true
 
