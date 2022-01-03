@@ -15,19 +15,32 @@ on:
       - 'rust-toolchain'
       - '.github/workflows/ci.yml'
 
+env:
+  CARGO_INCREMENTAL: 0
+
 jobs:
   check:
     runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v2
+
+      - name: Get Rust toolchain
+        id: toolchain
+        run: |
+          echo -n "::set-output name=toolchain::"
+          awk -F'[ ="]+' '$1 == "channel" { print $2 }' rust-toolchain
+
       - uses: actions-rs/toolchain@v1
         with:
-          toolchain: stable
+          toolchain: ${{ steps.toolchain.outputs.toolchain }}
           components: clippy
           override: true
 
-      - name: clippy
+      - name: cache dependencies
+        uses: Swatinem/rust-cache@v1.3.0
+
+      - name: reviewdog / clippy
         uses: sksat/action-clippy@v0.1.0
         with:
           reporter: github-pr-review
