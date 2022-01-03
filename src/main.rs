@@ -1,4 +1,5 @@
 use std::fs::File;
+use std::io::Write;
 use std::io::{BufRead, BufReader};
 
 use json_spanned_value as jsv;
@@ -31,6 +32,13 @@ async fn main() {
                 .takes_value(true)
                 .default_value("whitelist.json")
                 .help("path to whitelist.json"),
+        )
+        .arg(
+            Arg::new("rdjson")
+                .long("rdjson")
+                .env("RDJSON_FILE")
+                .help("output with Reviewdog Diagnostic Format")
+                .takes_value(true),
         )
         .get_matches();
 
@@ -75,6 +83,7 @@ async fn main() {
 
     let it = user_list.iter().zip(spanned_list.iter());
 
+    let mut rdjson = rdfmt::RdJson::error();
     println!("start user check...");
     let mut has_error = false;
     for (user, spanned) in it {
@@ -85,6 +94,7 @@ async fn main() {
         }
 
         let obj = spanned.as_span_object().unwrap();
+        let range = obj.range();
 
         use codespan_reporting::term;
         term::emit(
@@ -95,12 +105,34 @@ async fn main() {
                 .with_message("this user does not exist!")
                 .with_labels(vec![codespan_reporting::diagnostic::Label::primary(
                     file,
-                    obj.range(),
+                    range.clone(),
                 )]),
         )
         .unwrap();
 
+        if matches.is_present("rdjson") {
+            let (line, column) = get_range(&json, range.start);
+            let start = rdfmt::Position::new(line, column);
+            let diagnost = rdfmt::Diagnostic::error()
+                .message("this user does not exist!".to_string())
+                .location(rdfmt::Location {
+                    path: Some(fname.to_string()),
+                    range: Some(rdfmt::Range {
+                        start: Some(start),
+                        end: None,
+                    }),
+                });
+            rdjson = rdjson.diagnost(diagnost);
+        }
+
         has_error = true;
+    }
+    println!("{}", serde_json::to_string(&rdjson).unwrap());
+    if let Some(fname) = matches.value_of("rdjson") {
+        let rdjson = serde_json::to_string(&rdjson).unwrap();
+
+        let mut file = File::create(fname).unwrap();
+        file.write_all(rdjson.as_bytes()).unwrap();
     }
 
     if has_error {
@@ -117,4 +149,24 @@ fn buf2str(stream: &mut impl BufRead) -> Result<String, ()> {
             _ => panic!("hoge"),
         }
     }
+}
+
+fn get_range(file: &str, pos: usize) -> (usize, usize) {
+    let file = file.lines();
+
+    let mut line = 1;
+    let mut p = 0;
+    for l in file {
+        for (column, _) in l.chars().enumerate() {
+            if p == pos {
+                return (line, column + 1);
+            }
+            p += 1;
+        }
+
+        p += 1;
+        line += 1;
+    }
+
+    unreachable!();
 }
