@@ -3,6 +3,8 @@ name: test Action
 on:
   workflow_dispatch:
   push:
+    branches:
+      - main
     paths:
       - 'action.yml'
       - '.github/workflows/test-action.yml'
@@ -24,3 +26,7 @@ jobs:
       - uses: sksat/minecraft-whitelist-validator@main
         with:
           json: mc.yohane.su/data/whitelist.json
+          rdjson: errors.json
+
+      - name: check errors
+        run: jq < errors.json

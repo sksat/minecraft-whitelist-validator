@@ -1,5 +1,8 @@
 use std::fs::File;
+use std::io::Write;
 use std::io::{BufRead, BufReader};
+
+use json_spanned_value as jsv;
 
 #[cfg(test)]
 pub mod test;
@@ -23,43 +26,116 @@ async fn main() {
                 .takes_value(false),
         )
         .arg(
-            Arg::new("JSON_FILE")
-                .help("path to whitelist.json")
-                //.required(true)
-                .index(1),
+            Arg::new("whitelist")
+                .long("whitelist")
+                .env("JSON_FILE")
+                .takes_value(true)
+                .default_value("whitelist.json")
+                .help("path to whitelist.json"),
+        )
+        .arg(
+            Arg::new("rdjson")
+                .long("rdjson")
+                .env("RDJSON_FILE")
+                .help("output with Reviewdog Diagnostic Format")
+                .takes_value(true),
         )
         .get_matches();
 
     let stdin = std::io::stdin();
     let mut stdin_lock = stdin.lock();
 
-    let mut buf: Box<dyn BufRead> = if matches.is_present("stdin") {
-        Box::new(&mut stdin_lock)
+    let buf: (&str, Box<dyn BufRead>) = if matches.is_present("stdin") {
+        ("stdin", Box::new(&mut stdin_lock))
     } else {
-        let file = if let Some(file) = matches.value_of("JSON_FILE") {
-            file
-        } else {
-            "whitelist.json"
-        };
-        println!("file: {}", file);
-        let file = File::open(file).unwrap();
+        let fname = matches.value_of("whitelist").unwrap();
+        println!("file: {}", fname);
+        let file = File::open(fname).unwrap();
         let buf = BufReader::new(file);
-        Box::new(buf)
+        (fname, Box::new(buf))
     };
+    let (fname, mut buf) = buf;
 
     let json = buf2str(&mut buf).unwrap();
+    let mut files = codespan_reporting::files::SimpleFiles::new();
+    let file = files.add(fname, &json);
 
-    let whitelist: minecraft::UserList = serde_json::from_str(&json).unwrap();
+    // check json file is valid user list
+    let result: Result<minecraft::UserList, _> = serde_json::from_str(&json);
+    if let Err(err) = result {
+        use rdfmt::*;
+        let ejson =
+            RdJson::error().diagnost(Diagnostic::error().message(err.to_string()).location(
+                Location {
+                    path: Some(fname.to_string()),
+                    range: Some(Range {
+                        start: Some(Position::new(err.line(), err.column())),
+                        end: None,
+                    }),
+                },
+            ));
+        println!("{}", serde_json::to_string(&ejson).unwrap());
+        panic!();
+    }
+    let user_list = result.unwrap();
+    let spanned_list: jsv::spanned::Array = jsv::from_str(&json).unwrap();
+    let spanned_list: Vec<jsv::Spanned<_>> = spanned_list.into_inner();
 
+    let it = user_list.iter().zip(spanned_list.iter());
+
+    let mut rdjson = rdfmt::RdJson::error();
     println!("start user check...");
-    for user in whitelist {
+    let mut has_error = false;
+    for (user, spanned) in it {
         print!("{}: ", user.name);
         if user.exist().await.unwrap() {
             println!("[ok]");
             continue;
         }
 
-        println!("does not exist!");
+        let obj = spanned.as_span_object().unwrap();
+        let range = obj.range();
+
+        use codespan_reporting::term;
+        term::emit(
+            &mut term::termcolor::StandardStream::stdout(term::termcolor::ColorChoice::Auto),
+            &term::Config::default(),
+            &files,
+            &codespan_reporting::diagnostic::Diagnostic::error()
+                .with_message("this user does not exist!")
+                .with_labels(vec![codespan_reporting::diagnostic::Label::primary(
+                    file,
+                    range.clone(),
+                )]),
+        )
+        .unwrap();
+
+        if matches.is_present("rdjson") {
+            let (line, column) = get_range(&json, range.start);
+            let start = rdfmt::Position::new(line, column);
+            let diagnost = rdfmt::Diagnostic::error()
+                .message("this user does not exist!".to_string())
+                .location(rdfmt::Location {
+                    path: Some(fname.to_string()),
+                    range: Some(rdfmt::Range {
+                        start: Some(start),
+                        end: None,
+                    }),
+                });
+            rdjson = rdjson.diagnost(diagnost);
+        }
+
+        has_error = true;
+    }
+    println!("{}", serde_json::to_string(&rdjson).unwrap());
+    if let Some(fname) = matches.value_of("rdjson") {
+        let rdjson = serde_json::to_string(&rdjson).unwrap();
+
+        let mut file = File::create(fname).unwrap();
+        file.write_all(rdjson.as_bytes()).unwrap();
+    }
+
+    if has_error {
         std::process::exit(1);
     }
 }
@@ -73,4 +149,24 @@ fn buf2str(stream: &mut impl BufRead) -> Result<String, ()> {
             _ => panic!("hoge"),
         }
     }
+}
+
+fn get_range(file: &str, pos: usize) -> (usize, usize) {
+    let file = file.lines();
+
+    let mut line = 1;
+    let mut p = 0;
+    for l in file {
+        for (column, _) in l.chars().enumerate() {
+            if p == pos {
+                return (line, column + 1);
+            }
+            p += 1;
+        }
+
+        p += 1;
+        line += 1;
+    }
+
+    unreachable!();
 }

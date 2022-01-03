@@ -13,7 +13,10 @@ categories = ["games"]
 keywords = ["minecraft"]
 
 [dependencies]
-clap = "3.0.0"
+clap = { version = "3.0.0", features = ["env"] }
+codespan-reporting = "0.11.1"
+json-spanned-value = "0.2.2"
+rdfmt = "0.1.0"
 reqwest = { version = "0.11.8", default-features = false, features = ["rustls-tls", "json"] }
 serde = { version = "1.0.133", features = ["derive"] }
 serde_json = "1.0.74"
