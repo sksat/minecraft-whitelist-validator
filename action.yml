@@ -3,6 +3,10 @@ description: 'validate Minecraft whitelist.json'
 author: 'sksat <sksat@sksat.net>'
 
 inputs:
+  img_tag:
+    description: minecraft-whitelist-validator image tag
+    required: true
+    default: 'v0.2.0'
   json:
     description: whitelist.json
     required: true
@@ -13,7 +17,7 @@ inputs:
 
 runs:
   using: 'docker'
-  image: 'docker://ghcr.io/sksat/minecraft-whitelist-validator:v0.2.0'
+  image: 'docker://ghcr.io/sksat/minecraft-whitelist-validator:${{ inputs.img_tag }}'
   env:
     JSON_FILE: ${{ inputs.json }}
     RDJSON_FILE: ${{ inputs.rdjson }}
