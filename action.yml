@@ -13,7 +13,7 @@ inputs:
 
 runs:
   using: 'docker'
-  image: 'docker://ghcr.io/sksat/minecraft-whitelist-validator:v0.2.0'
+  image: 'docker://ghcr.io/sksat/minecraft-whitelist-validator:v0.3.0'
   env:
     JSON_FILE: ${{ inputs.json }}
     RDJSON_FILE: ${{ inputs.rdjson }}
