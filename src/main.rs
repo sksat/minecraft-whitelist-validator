@@ -64,16 +64,17 @@ async fn main() {
     let result: Result<minecraft::UserList, _> = serde_json::from_str(&json);
     if let Err(err) = result {
         use rdfmt::*;
-        let ejson =
-            RdJson::error().diagnost(Diagnostic::error().message(err.to_string()).location(
-                Location {
+        let ejson = RdJson::error().with_diagnost(
+            Diagnostic::error()
+                .with_message(err.to_string())
+                .with_location(Location {
                     path: Some(fname.to_string()),
                     range: Some(Range {
                         start: Some(Position::new(err.line(), err.column())),
                         end: None,
                     }),
-                },
-            ));
+                }),
+        );
         println!("{}", serde_json::to_string(&ejson).unwrap());
         panic!();
     }
@@ -114,15 +115,15 @@ async fn main() {
             let (line, column) = get_range(&json, range.start);
             let start = rdfmt::Position::new(line, column);
             let diagnost = rdfmt::Diagnostic::error()
-                .message("this user does not exist!".to_string())
-                .location(rdfmt::Location {
+                .with_message("this user does not exist!".to_string())
+                .with_location(rdfmt::Location {
                     path: Some(fname.to_string()),
                     range: Some(rdfmt::Range {
                         start: Some(start),
                         end: None,
                     }),
                 });
-            rdjson = rdjson.diagnost(diagnost);
+            rdjson = rdjson.with_diagnost(diagnost);
         }
 
         has_error = true;
