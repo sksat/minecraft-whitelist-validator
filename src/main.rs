@@ -50,7 +50,7 @@ async fn main() {
     } else {
         let fname = matches.value_of("whitelist").unwrap();
         println!("file: {}", fname);
-        let file = File::open(fname).unwrap();
+        let file = File::open(fname).unwrap_or_else(|_| panic!("could not open {}", fname));
         let buf = BufReader::new(file);
         (fname, Box::new(buf))
     };
@@ -128,12 +128,16 @@ async fn main() {
 
         has_error = true;
     }
-    println!("{}", serde_json::to_string(&rdjson).unwrap());
+    let rdjson = serde_json::to_string(&rdjson).expect("rdjson serialize failed!");
+    println!("{}", rdjson);
     if let Some(fname) = matches.value_of("rdjson") {
-        let rdjson = serde_json::to_string(&rdjson).unwrap();
-
-        let mut file = File::create(fname).unwrap();
-        file.write_all(rdjson.as_bytes()).unwrap();
+        if fname.is_empty() {
+            println!("warning: rdjson file name is empty. skip output.");
+        } else {
+            let mut file = File::create(fname)
+                .unwrap_or_else(|_| panic!("could not create rdjson file: {}", fname));
+            file.write_all(rdjson.as_bytes()).unwrap();
+        }
     }
 
     if has_error {
