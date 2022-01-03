@@ -30,6 +30,7 @@ jobs:
 | Name   | Required | Description                        | Type   | Default        |
 | -------| :------: | -----------------------------------| ------ | -------------- |
 | `json` | ✓        | Minecraft whitelist.json file path | string | whitelist.json |
+| `rdjson` |        | [RDFormat](https://github.com/reviewdog/reviewdog/tree/master/proto/rdf) json file path(output) | string | |
 
 ## Docker
 
@@ -37,8 +38,8 @@ jobs:
 
 ```sh
 # bash
-docker run --rm -it -v "$(pwd)"/whitelist.json:/app/whitelist.json sksat/minecraft-whitelist-validator /app/minecraft-whitelist-validator whitelist.json
+docker run --rm -it -v "$(pwd)"/whitelist.json:/app/whitelist.json sksat/minecraft-whitelist-validator /app/minecraft-whitelist-validator
 
 # fish
-docker run --rm -it -v (pwd)/whitelist.json:/app/whitelist.json sksat/minecraft-whitelist-validator /app/minecraft-whitelist-validator whitelist.json
+docker run --rm -it -v (pwd)/whitelist.json:/app/whitelist.json sksat/minecraft-whitelist-validator /app/minecraft-whitelist-validator
 ```

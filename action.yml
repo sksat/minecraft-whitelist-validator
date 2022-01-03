@@ -7,9 +7,13 @@ inputs:
     description: whitelist.json
     required: true
     default: 'whitelist.json'
+  rdjson:
+    description: RDFormat JSON(output)
+    required: false
 
 runs:
   using: 'docker'
   image: 'docker://ghcr.io/sksat/minecraft-whitelist-validator:v0.2.0'
-  args:
-    - ${{ inputs.json }}
+  env:
+    JSON_FILE: ${{ inputs.json }}
+    RDJSON_FILE: ${{ inputs.rdjson }}
