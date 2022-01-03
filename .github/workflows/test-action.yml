@@ -24,3 +24,7 @@ jobs:
       - uses: sksat/minecraft-whitelist-validator@main
         with:
           json: mc.yohane.su/data/whitelist.json
+          rdjson: errors.json
+
+      - name: check errors
+        run: jq < errors.json
