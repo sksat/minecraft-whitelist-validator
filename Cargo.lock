@@ -495,9 +495,9 @@ dependencies = [
 
 [[package]]
 name = "rdfmt"
-version = "0.2.0"
+version = "0.2.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "52f271f1efbb36944c1acba2c7c588a94b6e55f31498c8402bcf3e7cdead6507"
+checksum = "2634f891b3be1a3bb8aca7138833f59139cd81bf5b4c935a59b872e33e095643"
 dependencies = [
  "reqwest",
  "schemafy",
