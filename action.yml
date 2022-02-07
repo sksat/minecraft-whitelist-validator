@@ -12,8 +12,17 @@ inputs:
     required: false
 
 runs:
-  using: 'docker'
-  image: 'docker://ghcr.io/sksat/minecraft-whitelist-validator:v0.3.2'
-  env:
-    JSON_FILE: ${{ inputs.json }}
-    RDJSON_FILE: ${{ inputs.rdjson }}
+  using: 'composite'
+  steps:
+    - name: install minecraft-whitelist-validator
+      shell: bash
+      run: |
+        cargo install minecraft-whitelist-validator --version 0.3.2 --locked
+        minecraft-whitelist-validator --version
+
+    - name: validate whitelist.json
+      shell: bash
+      run: minecraft-whitelist-validator
+      env:
+        JSON_FILE: ${{ inputs.json }}
+        RDJSON_FILE: ${{ inputs.rdjson }}
