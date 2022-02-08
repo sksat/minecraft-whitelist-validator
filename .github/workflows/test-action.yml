@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
   push:
     branches:
-      - composite-action
+      - main
     paths:
       - 'action.yml'
       - '.github/workflows/test-action.yml'
@@ -23,7 +23,7 @@ jobs:
           ref: main
           path: mc.yohane.su
 
-      - uses: sksat/minecraft-whitelist-validator@composite-action
+      - uses: sksat/minecraft-whitelist-validator@main
         with:
           json: mc.yohane.su/data/whitelist.json
           rdjson: errors.json
