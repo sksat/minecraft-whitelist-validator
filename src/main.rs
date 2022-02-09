@@ -129,8 +129,8 @@ async fn main() {
         has_error = true;
     }
     let rdjson = serde_json::to_string(&rdjson).expect("rdjson serialize failed!");
-    println!("{}", rdjson);
     if let Some(fname) = matches.value_of("rdjson") {
+        println!("{}", rdjson);
         if fname.is_empty() {
             println!("warning: rdjson file name is empty. skip output.");
         } else {
