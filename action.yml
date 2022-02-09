@@ -17,7 +17,7 @@ runs:
     - name: install minecraft-whitelist-validator
       shell: bash
       run: |
-        cargo install minecraft-whitelist-validator --version 0.3.2 --locked
+        cargo install minecraft-whitelist-validator --version 0.3.3 --locked
         minecraft-whitelist-validator --version
 
     - name: validate whitelist.json
