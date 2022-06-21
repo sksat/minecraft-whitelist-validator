@@ -13,7 +13,7 @@ categories = ["games"]
 keywords = ["minecraft"]
 
 [dependencies]
-clap = { version = "3.2.4", features = ["env"] }
+clap = { version = "3.2.6", features = ["env"] }
 codespan-reporting = "0.11.1"
 json-spanned-value = "0.2.2"
 rdfmt = "0.2.1"
