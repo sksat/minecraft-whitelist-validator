@@ -14,10 +14,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: checkout mc.yohane.su
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           repository: sksat/mc.yohane.su
           ref: main
