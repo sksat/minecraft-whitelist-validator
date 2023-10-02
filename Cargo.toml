@@ -17,7 +17,7 @@ clap = { version = "3.2.25", features = ["env"] }
 codespan-reporting = "0.11.1"
 json-spanned-value = "0.2.2"
 rdfmt = "0.2.1"
-reqwest = { version = "0.11.20", default-features = false, features = ["rustls-tls", "json"] }
+reqwest = { version = "0.11.21", default-features = false, features = ["rustls-tls", "json"] }
 serde = { version = "1.0.188", features = ["derive"] }
 serde_json = "1.0.107"
 tokio = { version = "1.32.0", features = ["rt", "rt-multi-thread", "macros"] }
