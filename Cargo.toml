@@ -16,7 +16,7 @@ keywords = ["minecraft"]
 clap = { version = "3.2.25", features = ["env"] }
 codespan-reporting = "0.11.1"
 json-spanned-value = "0.2.2"
-rdfmt = "0.2.1"
+rdfmt = "0.3.0"
 reqwest = { version = "0.11.27", default-features = false, features = ["rustls-tls", "json"] }
 serde = { version = "1.0.197", features = ["derive"] }
 serde_json = "1.0.114"
