@@ -47,7 +47,7 @@ jobs:
         id: toolchain
         run: |
           awk -F'[ ="]+' '$1 == "channel" { print "toolchain=" $2 }' rust-toolchain >> "$GITHUB_OUTPUT"
-      - uses: dtolnay/rust-toolchain@stable
+      - uses: dtolnay/rust-toolchain@master
         with:
           toolchain: ${{ steps.toolchain.outputs.toolchain }}
           targets: x86_64-unknown-linux-musl
