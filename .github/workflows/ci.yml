@@ -30,11 +30,10 @@ jobs:
         run: |
           awk -F'[ ="]+' '$1 == "channel" { print "toolchain=" $2 }' rust-toolchain >> "$GITHUB_OUTPUT"
 
-      - uses: actions-rs/toolchain@v1
+      - uses: dtolnay/rust-toolchain@stable
         with:
-          toolchain: ${{ steps.toolchain.outputs.toolchain }}
+          targets: x86_64-unknown-linux-musl
           components: clippy
-          override: true
 
       - name: cache dependencies
         uses: Swatinem/rust-cache@v2.7.3

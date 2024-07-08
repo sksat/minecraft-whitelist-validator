@@ -47,9 +47,10 @@ jobs:
         id: toolchain
         run: |
           awk -F'[ ="]+' '$1 == "channel" { print "toolchain=" $2 }' rust-toolchain >> "$GITHUB_OUTPUT"
-      - uses: actions-rs/toolchain@v1.0.7
+      - uses: dtolnay/rust-toolchain@stable
         with:
           toolchain: ${{ steps.toolchain.outputs.toolchain }}
+          targets: x86_64-unknown-linux-musl
 
       - name: package
         run: cargo package
