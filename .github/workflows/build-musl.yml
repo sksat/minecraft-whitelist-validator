@@ -13,16 +13,15 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
-    - uses: actions-rs/toolchain@v1
+
+    - uses: dtolnay/rust-toolchain@stable
       with:
-        toolchain: stable
-        target: x86_64-unknown-linux-musl
-        override: true
-    - uses: actions-rs/cargo@v1
-      with:
-        use-cross: true
-        command: build
-        args: --release --target x86_64-unknown-linux-musl
+        targets: x86_64-unknown-linux-musl
+
+    - name: build
+      run: |
+        cargo build --release --target x86_64-unknown-linux-musl
+
     - uses: actions/upload-artifact@v4.3.4
       with:
         name: minecraft-whitelist-validator
