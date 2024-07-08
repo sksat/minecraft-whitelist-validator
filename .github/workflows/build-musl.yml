@@ -26,7 +26,7 @@ jobs:
     - name: install deps
       run: |
         sudo apt update
-        sudo apt install musl-dev
+        sudo apt install musl-tools
 
     - name: build
       run: |
