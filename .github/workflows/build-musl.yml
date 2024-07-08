@@ -23,6 +23,11 @@ jobs:
         toolchain: ${{ steps.toolchain.outputs.toolchain }}
         targets: x86_64-unknown-linux-musl
 
+    - name: install deps
+      run: |
+        sudo apt update
+        sudo apt install musl-dev
+
     - name: build
       run: |
         cargo build --release --target x86_64-unknown-linux-musl
