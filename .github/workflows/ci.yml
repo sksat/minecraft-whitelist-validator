@@ -28,8 +28,7 @@ jobs:
       - name: Get Rust toolchain
         id: toolchain
         run: |
-          echo -n "::set-output name=toolchain::"
-          awk -F'[ ="]+' '$1 == "channel" { print $2 }' rust-toolchain
+          awk -F'[ ="]+' '$1 == "channel" { print "toolchain=" $2 }' rust-toolchain >> "$GITHUB_OUTPUT"
 
       - uses: actions-rs/toolchain@v1
         with:
