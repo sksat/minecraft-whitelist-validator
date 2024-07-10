@@ -1,7 +1,7 @@
 FROM gcr.io/distroless/cc
 LABEL maintainer "sksat <sksat@sksat.net>"
 
-FROM rust:1.76.0 as chef
+FROM rust:1.79.0 as chef
 RUN cargo install --version 0.1.33 cargo-chef
 WORKDIR /build
 
@@ -10,7 +10,7 @@ FROM chef as metadata
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN apt-get update -y && apt-get install -y jq
 ADD . .
-RUN cargo metadata --format-version=1 | jq --raw-output '.workspace_members[0]' | cut -d' ' -f 1 > app_name
+RUN basename $(cargo metadata --format-version=1 | jq --raw-output '.workspace_members[0]' | sed 's|.*://||') | cut -d'@' -f 1 | cut -d'#' -f 2 > app_name
 
 FROM chef as planner
 COPY . .
