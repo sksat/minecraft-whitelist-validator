@@ -22,7 +22,7 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Pre Release
-        uses: softprops/action-gh-release@v2.3.3
+        uses: softprops/action-gh-release@v2.4.1
         if: startsWith(github.ref, 'refs/tags/') && contains(github.ref, 'rc')
         with:
           draft: true
@@ -30,7 +30,7 @@ jobs:
           generate_release_notes: false
 
       - name: Release
-        uses: softprops/action-gh-release@v2.3.3
+        uses: softprops/action-gh-release@v2.4.1
         if: startsWith(github.ref, 'refs/tags/') && (!contains(github.ref, 'rc'))
         with:
           draft: false
